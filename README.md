@@ -1,10 +1,10 @@
 # wmd77
 
-This is my Penrose based X11 Tiling Window Manager.
+This is a Penrose based X11 Tiling Window Manager written for d77void.
 
 ![wmd77](wmd77_desk.png?raw=true)
 
-Since the first release, I've added a few things, namely:
+Since the first release, a few additions have been made, namely:
 
 - Monocle, Grid, Fibonacci and Tatami layouts;
 
