@@ -28,8 +28,8 @@ pub fn raw_key_bindings(
         "M-Tab" => modify_with(|cs| cs.toggle_tag()),
         
         // Screen management
-        "M-bracketright" => modify_with(|cs| cs.next_screen()),
-        "M-bracketleft" => modify_with(|cs| cs.previous_screen()),
+        "M-period" => modify_with(|cs| cs.next_screen()),
+        "M-comma" => modify_with(|cs| cs.previous_screen()),
         
         // Layout management
         "M-m" => modify_with(|cs| cs.next_layout()),
@@ -52,6 +52,11 @@ pub fn raw_key_bindings(
         // System
         "M-S-s" => log_current_state(),
         "M-S-q" => exit(),
+
+        // Volume (PulseAudio)
+        "XF86AudioRaiseVolume" => spawn_action("pactl set-sink-volume @DEFAULT_SINK@ +5%"),
+        "XF86AudioLowerVolume" => spawn_action("pactl set-sink-volume @DEFAULT_SINK@ -5%"),
+        "XF86AudioMute" => spawn_action("pactl set-sink-mute @DEFAULT_SINK@ toggle"),
     };
 
     // Add workspace bindings
