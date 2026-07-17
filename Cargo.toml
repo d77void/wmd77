@@ -1,6 +1,6 @@
 [package]
 name = "wmd77"
-version = "0.4.0"
+version = "0.4.1"
 description = "Simple Tiling WM written with Penrose Libraries."
 authors = ["Daniel Azevedo", "dani-77 <daniazevedo77@posteo.net>"]
 license = "MIT"
