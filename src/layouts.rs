@@ -1,6 +1,6 @@
-use penrose::core::layout::LayoutStack;
-use penrose::builtin::layout::{MainAndStack, Monocle, Grid};
 use penrose::builtin::layout::transformers::{Gaps, ReflectHorizontal, ReserveTop};
+use penrose::builtin::layout::{Grid, MainAndStack, Monocle};
+use penrose::core::layout::LayoutStack;
 use penrose::extensions::layout::{Fibonacci, Tatami};
 use penrose::stack;
 

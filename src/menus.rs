@@ -1,17 +1,12 @@
-use penrose::x11rb::RustConn;
-use penrose::core::bindings::KeyEventHandler;
 use penrose::builtin::actions::key_handler;
+use penrose::core::bindings::KeyEventHandler;
 use penrose::extensions::util::dmenu::{DMenu, DMenuConfig, MenuMatch};
 use penrose::util::spawn;
+use penrose::x11rb::RustConn;
 
 pub fn logout_menu() -> Box<dyn KeyEventHandler<RustConn>> {
     key_handler(|state, _x| {
-        let choices = vec![
-            "󰒲  suspend",
-            "󰍃  logout",
-            "󱞳  reboot",
-            "󰤆  shutdown"
-        ];
+        let choices = vec!["󰒲  suspend", "󰍃  logout", "󱞳  reboot", "󰤆  shutdown"];
 
         let config = DMenuConfig {
             ignore_case: true,
@@ -33,7 +28,7 @@ pub fn logout_menu() -> Box<dyn KeyEventHandler<RustConn>> {
                 "󱞳  reboot" => "loginctl reboot",
                 _ => return Ok(()),
             };
-            
+
             if let Err(e) = spawn(cmd) {
                 tracing::error!("Failed to execute {}: {}", cmd, e);
             }

@@ -1,16 +1,16 @@
 mod config;
-mod theme;
-mod keybindings;
-mod mouse;
-mod layouts;
 mod hooks;
-mod scratchpads;
+mod keybindings;
+mod layouts;
 mod menus;
+mod mouse;
+mod scratchpads;
+mod theme;
 
 use anyhow::{Context, Result};
-use penrose::x11rb::RustConn;
 use penrose::core::{WindowManager, bindings::parse_keybindings_with_xmodmap};
 use penrose::extensions::hooks::add_named_scratchpads;
+use penrose::x11rb::RustConn;
 use penrose_ui::{bar::Position, status_bar};
 use tracing_subscriber::{self, prelude::*};
 
@@ -28,14 +28,12 @@ fn main() -> Result<()> {
     let config = config::build_config();
 
     // Setup X11 connection
-    let conn = RustConn::new()
-        .context("Failed to establish X11 connection")?;
+    let conn = RustConn::new().context("Failed to establish X11 connection")?;
 
     // Parse keybindings
-    let key_bindings = parse_keybindings_with_xmodmap(
-        keybindings::raw_key_bindings(toggle_terminal)
-    )
-    .context("Failed to parse keybindings")?;
+    let key_bindings =
+        parse_keybindings_with_xmodmap(keybindings::raw_key_bindings(toggle_terminal))
+            .context("Failed to parse keybindings")?;
 
     // Create status bar
     let bar = status_bar(
@@ -50,13 +48,8 @@ fn main() -> Result<()> {
     .map_err(|e| anyhow::anyhow!("Failed to create status bar: {}", e))?;
 
     // Initialize window manager
-    let wm = WindowManager::new(
-        config,
-        key_bindings,
-        mouse::mouse_bindings(),
-        conn,
-    )
-    .context("Failed to initialize window manager")?;
+    let wm = WindowManager::new(config, key_bindings, mouse::mouse_bindings(), conn)
+        .context("Failed to initialize window manager")?;
 
     // Add status bar to window manager
     let wm = bar.add_to(wm);
@@ -65,8 +58,7 @@ fn main() -> Result<()> {
     let wm = add_named_scratchpads(wm, vec![nsp_terminal]);
 
     // Run window manager
-    wm.run()
-        .context("Window manager event loop failed")?;
+    wm.run().context("Window manager event loop failed")?;
 
     Ok(())
 }
