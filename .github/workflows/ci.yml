@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  rust:
+    name: Rust (build, test, fmt, clippy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # libfontconfig1-dev: penrose_ui's font handling (yeslogic-fontconfig-sys).
+      # libx11-dev + libxft-dev: penrose_ui pulls in the `x11` crate with its
+      # "xlib" and "xft" features, whose build.rs pkg-config-probes for
+      # `x11`/`xft` accordingly - without these two, the build fails on
+      # `pkg-config exited with status code 1` for `x11.pc`.
+      - name: Install system dev headers
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libfontconfig1-dev libx11-dev libxft-dev
+
+      - name: Install stable toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: cargo build
+        run: cargo build --release --locked
+
+      - name: cargo test
+        run: cargo test --release --locked
+
+      - name: cargo fmt --check
+        run: cargo fmt --all -- --check
+
+      # No --all-targets here: wmd77 is a --bin-only crate with zero
+      # #[test]s, and clippy --all-targets pulls in the `test` build unit
+      # anyway - in that unit rustc's synthesized test-runner main() never
+      # calls the real main(), so anything only reachable from it reads as
+      # dead code and clippy errors on a false positive. Plain
+      # `cargo clippy` (bin target only) doesn't hit this.
+      - name: cargo clippy
+        run: cargo clippy -- -D warnings
+
+  make:
+    name: Makefile (build-release)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # libfontconfig1-dev: penrose_ui's font handling (yeslogic-fontconfig-sys).
+      # libx11-dev + libxft-dev: penrose_ui pulls in the `x11` crate with its
+      # "xlib" and "xft" features, whose build.rs pkg-config-probes for
+      # `x11`/`xft` accordingly - without these two, the build fails on
+      # `pkg-config exited with status code 1` for `x11.pc`.
+      - name: Install system dev headers
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libfontconfig1-dev libx11-dev libxft-dev
+
+      - name: Install stable toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      # Only `build-release` is exercised here: `install`/`uninstall` write
+      # straight to /usr, /etc/xdg and /usr/share/xsessions with no DESTDIR
+      # support, so there's no safe staged way to verify them without either
+      # running for real against the runner's system paths or changing the
+      # Makefile itself - neither seemed like something to do unprompted.
+      - name: make build-release
+        run: make build-release

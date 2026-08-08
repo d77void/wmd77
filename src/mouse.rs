@@ -1,10 +1,8 @@
-use penrose::x11rb::RustConn;
-use penrose::core::bindings::{MouseEventHandler, MouseState};
-use penrose::builtin::actions::floating::{
-    MouseDragHandler, MouseResizeHandler, sink_focused
-};
+use penrose::builtin::actions::floating::{MouseDragHandler, MouseResizeHandler, sink_focused};
 use penrose::core::bindings::click_handler;
+use penrose::core::bindings::{MouseEventHandler, MouseState};
 use penrose::map;
+use penrose::x11rb::RustConn;
 use std::collections::HashMap;
 
 pub fn mouse_bindings() -> HashMap<MouseState, Box<dyn MouseEventHandler<RustConn>>> {
