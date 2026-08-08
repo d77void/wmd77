@@ -1,4 +1,7 @@
-# wmd77
+<div align="center">
+   # wmd77
+   </div>
+<hr>
 
 This is a Penrose based X11 Tiling Window Manager written for d77void.
 
