@@ -1,4 +1,4 @@
-use penrose::builtin::actions::key_handler;
+use penrose::builtin::actions::{exit, key_handler};
 use penrose::core::bindings::KeyEventHandler;
 use penrose::extensions::util::dmenu::{DMenu, DMenuConfig, MenuMatch};
 use penrose::util::spawn;
@@ -21,9 +21,16 @@ pub fn logout_menu() -> Box<dyn KeyEventHandler<RustConn>> {
         let dmenu = DMenu::new(&config, screen_index);
 
         if let Ok(MenuMatch::Line(_, choice)) = dmenu.build_menu(choices) {
+            // Clean WM shutdown: penrose stops wm.run() and main returns, ending
+            // the X session -- same as M-S-q. `kill -9 -1` used to SIGKILL every
+            // user process (tmux/ssh included) with no cleanup.
+            if choice.as_str() == "󰍃  logout" {
+                let mut do_exit = exit::<RustConn>();
+                return do_exit.call(state, _x);
+            }
+
             let cmd = match choice.as_str() {
                 "󰒲  suspend" => "loginctl suspend",
-                "󰍃  logout" => "kill -9 -1",
                 "󰤆  shutdown" => "loginctl poweroff",
                 "󱞳  reboot" => "loginctl reboot",
                 _ => return Ok(()),
