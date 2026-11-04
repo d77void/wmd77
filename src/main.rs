@@ -7,6 +7,7 @@ mod mouse;
 mod reload;
 mod scratchpads;
 mod user_config;
+mod xwatch;
 
 use anyhow::{Context, Result};
 use nix::sys::signal::{SigHandler, Signal, signal};
@@ -88,6 +89,7 @@ fn main() -> Result<()> {
 
     // Run window manager
     reload::install();
+    xwatch::install();
     wm.run().context("Window manager event loop failed")?;
 
     // The `restart` action (M-S-r) and SIGHUP stop the loop above like a

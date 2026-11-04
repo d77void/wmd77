@@ -1,6 +1,6 @@
 [package]
 name = "wmd77"
-version = "0.5.0"
+version = "0.5.1"
 description = "Simple Tiling WM written with Penrose Libraries."
 authors = ["Daniel Azevedo", "dani-77 <daniazevedo77@posteo.net>"]
 license = "MIT"
@@ -15,5 +15,7 @@ penrose = "0.4.0"
 penrose_ui = "0.4.0"
 serde = { version = "1.0.229", features = ["derive"] }
 toml = "1.1.4"
+# Already pulled in by penrose; used directly by xwatch.rs.
+x11rb = "0.13"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
