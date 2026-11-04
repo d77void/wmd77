@@ -253,13 +253,20 @@ impl RawBar {
             None | Some("top") => false,
             Some("bottom") => true,
             Some(other) => {
-                warn!(position = other, "bar position must be \"top\" or \"bottom\", using top");
+                warn!(
+                    position = other,
+                    "bar position must be \"top\" or \"bottom\", using top"
+                );
                 false
             }
         };
         // With the built-in bar off (or at the bottom) nothing needs room at
         // the top unless the user asks for it, e.g. for an external bar.
-        let reserve_default = if enable && !bottom { default.reserve_top } else { 0 };
+        let reserve_default = if enable && !bottom {
+            default.reserve_top
+        } else {
+            0
+        };
         Bar {
             enable,
             height: self.height.unwrap_or(default.height).clamp(8, 200),
@@ -287,8 +294,24 @@ impl RawApps {
             terminal: self.terminal.unwrap_or(default.terminal),
             launcher: self.launcher.unwrap_or(default.launcher),
             locker: self.locker.unwrap_or(default.locker),
-            startup_script: self.startup_script.unwrap_or(default.startup_script),
+            startup_script: self
+                .startup_script
+                .map(|p| expand_home(&p, env::var_os("HOME")))
+                .unwrap_or(default.startup_script),
         }
+    }
+}
+
+/// `~/...` -> `$HOME/...`. The startup script isn't run through a shell, so
+/// this is what lets a config (e.g. one shipped in /etc/skel) point at a
+/// script in the user's own home.
+fn expand_home(path: &str, home: Option<std::ffi::OsString>) -> String {
+    match (path.strip_prefix("~/"), home) {
+        (Some(rest), Some(home)) if !home.is_empty() => PathBuf::from(home)
+            .join(rest)
+            .to_string_lossy()
+            .into_owned(),
+        _ => path.to_string(),
     }
 }
 
@@ -613,6 +636,20 @@ mod tests {
         assert_eq!(c.theme.name, "d77");
         assert_eq!(c.bar, Bar::default());
         assert!(c.binds.is_none());
+    }
+
+    #[test]
+    fn startup_script_in_home() {
+        let home = Some(std::ffi::OsString::from("/home/pipa"));
+        assert_eq!(
+            expand_home("~/.config/wmd77/startup.sh", home.clone()),
+            "/home/pipa/.config/wmd77/startup.sh"
+        );
+        assert_eq!(
+            expand_home("/etc/xdg/wmd77/startup.sh", home.clone()),
+            "/etc/xdg/wmd77/startup.sh"
+        );
+        assert_eq!(expand_home("~/x.sh", None), "~/x.sh");
     }
 
     #[test]

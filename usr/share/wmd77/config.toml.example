@@ -38,6 +38,7 @@
 # terminal = "st"
 # launcher = "dmenu_run"
 # locker = "slock"
+# startup_script may start with ~/ for a script in your home directory.
 # startup_script = "/etc/xdg/wmd77/startup.sh"
 
 # ── Window rules ─────────────────────────────────────────────────────────

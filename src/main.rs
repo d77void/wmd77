@@ -63,7 +63,11 @@ fn main() -> Result<()> {
             bg: Some(theme.black.into()),
             padding: (2, 2),
         };
-        let position = if user.bar.bottom { Position::Bottom } else { Position::Top };
+        let position = if user.bar.bottom {
+            Position::Bottom
+        } else {
+            Position::Top
+        };
         let bar = status_bar(
             user.bar.height,
             &theme.font,
