@@ -9,9 +9,9 @@ const RATIO: f32 = 0.6;
 const RATIO_STEP: f32 = 0.1;
 const OUTER_PX: u32 = 5;
 const INNER_PX: u32 = 5;
-const TOP_PX: u32 = 18;
 
-pub fn build_layouts() -> LayoutStack {
+/// `top_px`: space kept free at the top of each screen (`[bar] reserve_top`).
+pub fn build_layouts(top_px: u32) -> LayoutStack {
     stack!(
         MainAndStack::side(MAX_MAIN, RATIO, RATIO_STEP),
         ReflectHorizontal::wrap(MainAndStack::side(MAX_MAIN, RATIO, RATIO_STEP)),
@@ -21,5 +21,5 @@ pub fn build_layouts() -> LayoutStack {
         Fibonacci::boxed_default(),
         Tatami::boxed_default()
     )
-    .map(|layout| ReserveTop::wrap(Gaps::wrap(layout, OUTER_PX, INNER_PX), TOP_PX))
+    .map(move |layout| ReserveTop::wrap(Gaps::wrap(layout, OUTER_PX, INNER_PX), top_px))
 }

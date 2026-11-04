@@ -22,7 +22,13 @@ Since the first release, a few additions have been made, namely:
 
 - A more complete status bar script;
 
-- A session menu to logout, reboot and shutdown (requires dmenu).
+- A session menu to logout, reboot and shutdown (requires dmenu);
+
+- A `config.toml` for themes, applications, window rules and keybindings,
+  reloaded in place with super + shift + r or `SIGHUP`;
+
+- The built-in bar can be switched off to run an external one (polybar,
+  lemonbar, ...).
 
 ## Build Dependencies
 
@@ -39,6 +45,8 @@ Since the first release, a few additions have been made, namely:
 - dmenu
 
 - st 
+
+- JetBrainsMono Nerd Font (the bar font of every built-in theme)
 
 ### Optional dependencies
 
@@ -80,6 +88,31 @@ To install widely:
 $ sudo make install
 ```
 
+## Configuration
+
+wmd77 works without any configuration file. To change something, copy the
+example and uncomment what you need:
+
+```
+$ mkdir -p ~/.config/wmd77
+$ cp /usr/share/wmd77/config.toml.example ~/.config/wmd77/config.toml
+```
+
+The file uses the same format as [pwm](https://github.com/dani-77/pwm)'s:
+`[theme]` (built-in themes `d77`, `gruvbox_dark`, `arc_dark`, `dracula`,
+`tokyo_night`, or your own palette), `[apps]` (terminal, launcher, locker,
+startup script), `[[window_rule]]`, `[[float_rule]]` and `[[bind]]`
+(remap or add keybindings). A theme only changes colors and the bar font;
+the wallpaper still comes from `startup.sh`.
+
+`[bar]` is wmd77's own: `enable = false` drops the built-in bar, and
+`reserve_top` keeps room at the top of the screen for an external bar
+started from `startup.sh`.
+
+Apply changes with super + shift + r, or from a script with
+`pkill -HUP -x wmd77`: wmd77 restarts in place and your windows stay open.
+[Kantele](https://github.com/dani-77/kantele) can edit the file for you.
+
 ## Keybinds
 
 Eventhough you can swap any of it, by default:
@@ -103,6 +136,8 @@ super + s -> scratchpad toggle
 super + x -> session menu
 
 super + shift + q -> quit WM
+
+super + shift + r -> reload config.toml
 
 # Credits
 

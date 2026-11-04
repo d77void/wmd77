@@ -1,0 +1,117 @@
+# wmd77 config.toml example
+#
+# Copy this file to ~/.config/wmd77/config.toml (or
+# $XDG_CONFIG_HOME/wmd77/config.toml) and uncomment/edit whatever you want to
+# change. Everything here is optional - anything you leave out keeps wmd77's
+# built-in default (its original compiled-in setup), and a missing or
+# invalid config.toml never stops wmd77 from starting. The format is the
+# same as pwm's, apart from the [bar] section.
+#
+# This file is only read at startup, not watched for changes - but the
+# "restart" action (bound to M-S-r by default) re-execs wmd77 in place, which
+# re-reads it without a full logout/login: existing windows survive, though
+# the bar and borders do flash briefly while the fresh process starts back
+# up. See "restart" under Keybindings below. Sending wmd77 a SIGHUP
+# (`pkill -HUP -x wmd77`) does the same restart, so tools that edit this file
+# can apply their changes without a keypress.
+
+# ── Theme ────────────────────────────────────────────────────────────────
+# Built-in themes: d77 (default), gruvbox_dark, arc_dark, dracula,
+# tokyo_night. An unknown name here falls back to d77 with a warning.
+# A theme sets the bar and border colors and the bar font; unlike pwm it
+# doesn't pick a wallpaper (startup.sh's feh line does that).
+[theme]
+# active = "d77"
+
+# You can also define your own theme, or override a built-in one by reusing
+# its name. Colors are hex strings - "0xRRGGBBAA", "0xRRGGBB", "#RRGGBBAA"
+# and "#RRGGBB" all work (a missing alpha defaults to fully opaque).
+# [theme.my_theme]
+# black  = "#282828"
+# white  = "#ebdbb2"
+# grey   = "#3c3836"
+# accent = "#aa96da"
+# font   = "JetBrainsMono Nerd Font"
+
+# ── Applications ─────────────────────────────────────────────────────────
+[apps]
+# terminal = "st"
+# launcher = "dmenu_run"
+# locker = "slock"
+# startup_script = "/etc/xdg/wmd77/startup.sh"
+
+# ── Window rules ─────────────────────────────────────────────────────────
+# Which window class opens on which tag. wmd77 has no built-in rules; a
+# second rule for the same class replaces the first one's workspace.
+# [[window_rule]]
+# class = "firefox"
+# workspace = "9"
+
+# [[window_rule]]
+# class = "mpv"
+# workspace = "5"
+
+# ── Floating windows ─────────────────────────────────────────────────────
+# Make specific window classes float, centered, instead of tiling - handy
+# for popups/dialogs like d77run, pavucontrol, or a picture-in-picture
+# player. width_ratio/height_ratio (0.0-1.0) size the floating window
+# relative to the screen; either one defaults to 0.6 if left out, and an
+# out-of-range value is clamped into 0.0..=1.0. Unlike [[window_rule]],
+# there's no built-in list here - a window only floats if you add a rule
+# for its class.
+# [[float_rule]]
+# class = "Pavucontrol"
+# width_ratio = 0.5
+# height_ratio = 0.5
+
+# ── Status bar ───────────────────────────────────────────────────────────
+# wmd77's own dwm-style bar: workspaces, then the root window name, which
+# /etc/xdg/wmd77/bar.sh keeps up to date with `xsetroot -name`.
+#
+# enable = false drops it, e.g. to run polybar or lemonbar instead (start it
+# from startup.sh); reserve_top then keeps that many pixels free at the top
+# of every screen for it. With the built-in bar on and at the top,
+# reserve_top defaults to 18; otherwise it defaults to 0.
+[bar]
+# enable = true
+# height = 20
+# font_size = 12
+# position = "top"        # or "bottom"
+# reserve_top = 18
+
+# ── Keybindings ──────────────────────────────────────────────────────────
+# Remap or add keybindings. Entries here are overlaid onto the built-in
+# keymap key by key: a [[bind]] for a key that already does something (e.g.
+# "M-j") replaces just that one binding, every other default stays as-is.
+# The one exception is toggle_scratchpad - it can only ever be bound to one
+# key, so pointing a new key at it moves it off the default M-s rather than
+# also keeping M-s bound to it. Key strings use the same format penrose
+# expects elsewhere, e.g. "M-j", "M-S-Return", "XF86AudioRaiseVolume".
+#
+# Available actions:
+#   focus_down, focus_up, swap_down, swap_up, kill_focused,
+#   toggle_fullscreen, toggle_tag, next_screen, previous_screen,
+#   next_layout, previous_layout, expand_main, shrink_main,
+#   inc_main         (arg: a signed integer, e.g. "1" or "-1")
+#   spawn_terminal, spawn_launcher, spawn_locker,
+#   spawn            (arg: any shell command)
+#   toggle_scratchpad (can only be bound once)
+#   logout_menu, log_state, exit
+#   restart          (re-reads this file - see the note below)
+#
+# [[bind]]
+# key = "M-j"
+# action = "focus_down"
+#
+# [[bind]]
+# key = "M-Return"
+# action = "spawn_terminal"
+#
+# [[bind]]
+# key = "M-Up"
+# action = "inc_main"
+# arg = "1"
+#
+# [[bind]]
+# key = "M-S-q"
+# action = "exit"
