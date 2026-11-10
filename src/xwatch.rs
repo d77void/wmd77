@@ -23,13 +23,15 @@ pub fn install() {
 
     let spawned = thread::Builder::new()
         .name("wmd77-xwatch".into())
-        .spawn(move || loop {
-            // No events are selected on this connection; anything that does
-            // arrive (an X error, say) is ignored. Only a broken connection
-            // ends the loop.
-            if let Err(e) = conn.wait_for_event() {
-                error!(%e, "lost the connection to the X server, exiting");
-                std::process::exit(1);
+        .spawn(move || {
+            loop {
+                // No events are selected on this connection; anything that does
+                // arrive (an X error, say) is ignored. Only a broken connection
+                // ends the loop.
+                if let Err(e) = conn.wait_for_event() {
+                    error!(%e, "lost the connection to the X server, exiting");
+                    std::process::exit(1);
+                }
             }
         });
     if let Err(e) = spawned {
