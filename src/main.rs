@@ -1,6 +1,7 @@
 mod config;
 mod hooks;
 mod keybindings;
+mod keyboard;
 mod layouts;
 mod menus;
 mod mouse;
@@ -43,6 +44,10 @@ fn main() -> Result<()> {
 
     // Setup X11 connection
     let conn = RustConn::new().context("Failed to establish X11 connection")?;
+
+    // [keyboard]: set the XKB layout and key repeat before the keybindings
+    // below are resolved (via xmodmap) against the keymap
+    user.keyboard.apply();
 
     // Parse keybindings
     let key_bindings = parse_keybindings_with_xmodmap(keybindings::raw_key_bindings(

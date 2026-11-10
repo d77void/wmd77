@@ -80,6 +80,28 @@
 # position = "top"        # or "bottom"
 # reserve_top = 18
 
+# ── Keyboard ─────────────────────────────────────────────────────────────
+# XKB layout (applied with setxkbmap) and key repeat (applied with
+# `xset r rate`). Every key is optional and nothing runs for what you leave
+# out: without this section the keyboard stays exactly as the X server
+# (xorg.conf, ~/.xinitrc, ...) set it up. Settings are re-applied on every
+# restart, so editing them and pressing M-S-r is enough.
+#
+# layout/variant/model take setxkbmap's own values; several layouts are
+# comma-separated, with one variant per layout ("" or a missing variant is
+# the layout's basic one). options can be a comma-separated string or a
+# list, and replaces every XKB option already set - options = [] clears
+# them all. repeat_delay is the milliseconds before a held key starts
+# repeating, repeat_rate the repeats per second after that; leaving one of
+# the two out uses the X default for it (660 ms / 25 per second).
+[keyboard]
+# layout = "pt"
+# variant = ""
+# model = "pc105"
+# options = ["caps:escape"]       # or "grp:alt_shift_toggle,caps:escape"
+# repeat_delay = 300
+# repeat_rate = 40
+
 # ── Keybindings ──────────────────────────────────────────────────────────
 # Remap or add keybindings. Entries here are overlaid onto the built-in
 # keymap key by key: a [[bind]] for a key that already does something (e.g.

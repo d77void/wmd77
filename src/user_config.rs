@@ -12,6 +12,7 @@
 //! re-exec wmd77 so it is read again. Anything missing, malformed or absent
 //! falls back to the built-in defaults, which reproduce wmd77's original
 //! compiled-in setup, rather than failing to start the window manager.
+use crate::keyboard::{Keyboard, RawKeyboard};
 use serde::Deserialize;
 use std::{collections::HashMap, env, fs, path::PathBuf};
 use tracing::warn;
@@ -135,6 +136,8 @@ pub struct UserConfig {
     /// `Some(specs)` is overlaid onto them key by key - see
     /// [`crate::keybindings::raw_key_bindings`].
     pub binds: Option<Vec<BindSpec>>,
+    /// `[keyboard]`: XKB layout and key repeat, see [`crate::keyboard`].
+    pub keyboard: Keyboard,
 }
 
 /// The themes wmd77 ships with, the same as pwm's. `d77` is the original
@@ -214,6 +217,8 @@ struct RawConfig {
     bar: RawBar,
     #[serde(default, rename = "bind")]
     binds: Vec<RawBind>,
+    #[serde(default)]
+    keyboard: RawKeyboard,
 }
 
 #[derive(Debug, Deserialize)]
@@ -511,6 +516,7 @@ fn resolve(raw: RawConfig) -> UserConfig {
         float_rules: resolve_float_rules(raw.float_rules),
         bar: raw.bar.resolve(),
         binds: resolve_binds(raw.binds),
+        keyboard: raw.keyboard.resolve(),
     }
 }
 
@@ -538,6 +544,7 @@ mod tests {
         assert!(c.float_rules.is_empty());
         assert_eq!(c.bar, Bar::default());
         assert!(c.binds.is_none());
+        assert_eq!(c.keyboard, Keyboard::default());
     }
 
     #[test]
@@ -636,6 +643,7 @@ mod tests {
         assert_eq!(c.theme.name, "d77");
         assert_eq!(c.bar, Bar::default());
         assert!(c.binds.is_none());
+        assert_eq!(c.keyboard, Keyboard::default());
     }
 
     #[test]

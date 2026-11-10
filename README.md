@@ -50,6 +50,8 @@ Since the first release, a few additions have been made, namely:
 
 ### Optional dependencies
 
+- setxkbmap and xset (only for the `[keyboard]` section of `config.toml`)
+
 - dunst
 
 - feh
@@ -104,6 +106,10 @@ The file uses the same format as [pwm](https://github.com/dani-77/pwm)'s:
 startup script), `[[window_rule]]`, `[[float_rule]]` and `[[bind]]`
 (remap or add keybindings). A theme only changes colors and the bar font;
 the wallpaper still comes from `startup.sh`.
+
+`[keyboard]` sets the XKB layout, variant, model and options (with
+`setxkbmap`) and the key repeat delay and rate (with `xset r rate`); only
+what you set is touched.
 
 `[bar]` is wmd77's own: `enable = false` drops the built-in bar, and
 `reserve_top` keeps room at the top of the screen for an external bar
