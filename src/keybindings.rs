@@ -1,3 +1,4 @@
+use crate::fullscreen::toggle_fullscreen;
 use crate::menus;
 use crate::user_config::{Apps, BindSpec};
 use penrose::builtin::actions::{
@@ -5,7 +6,6 @@ use penrose::builtin::actions::{
 };
 use penrose::builtin::layout::messages::{ExpandMain, IncMain, ShrinkMain};
 use penrose::core::bindings::KeyEventHandler;
-use penrose::extensions::actions::toggle_fullscreen;
 use penrose::extensions::hooks::ToggleNamedScratchPad;
 use penrose::map;
 use penrose::x11rb::RustConn;

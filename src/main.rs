@@ -1,4 +1,5 @@
 mod config;
+mod fullscreen;
 mod hooks;
 mod keybindings;
 mod keyboard;
@@ -111,7 +112,15 @@ fn main() -> Result<()> {
             warn!(%e, "failed to reset SIGCHLD disposition before restart");
         }
 
+        // When a package upgrade (or a manual install) replaces the binary
+        // while wmd77 runs, /proc/self/exe reads "<path> (deleted)" and exec
+        // would fail, ending the session: run the file now at that path.
         let exe = std::env::current_exe()?;
+        let exe = exe
+            .to_str()
+            .and_then(|path| path.strip_suffix(" (deleted)"))
+            .map(std::path::PathBuf::from)
+            .unwrap_or(exe);
         let err = std::process::Command::new(exe).exec();
         // `exec` only returns if it failed to replace the process image.
         panic!("failed to re-exec wmd77 for restart: {err}");

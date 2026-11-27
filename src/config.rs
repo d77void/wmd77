@@ -1,5 +1,5 @@
 use crate::user_config::UserConfig;
-use crate::{hooks, layouts, reload};
+use crate::{fullscreen, hooks, layouts, reload};
 use penrose::core::Config;
 use penrose::core::hooks::ManageHook;
 use penrose::extensions::hooks::add_ewmh_hooks;
@@ -17,6 +17,8 @@ pub fn build_config(user: &UserConfig) -> Config<RustConn> {
         ..Config::default()
     });
 
+    // Client fullscreen requests, ahead of penrose's ewmh hook (see fullscreen.rs)
+    config.compose_or_set_event_hook(fullscreen::event_hook);
     // SIGHUP re-reads config.toml (see reload.rs)
     config.compose_or_set_event_hook(reload::event_hook);
     config
