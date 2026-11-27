@@ -7,13 +7,15 @@ use penrose::extensions::hooks::manage::{FloatingCentered, SetWorkspace};
 use penrose::x::query::ClassName;
 use penrose::x11rb::RustConn;
 
-pub fn build_config(user: &UserConfig) -> Config<RustConn> {
+/// `run_startup` is false after a restart (M-S-r, SIGHUP): everything the
+/// startup script started is still running.
+pub fn build_config(user: &UserConfig, run_startup: bool) -> Config<RustConn> {
     let mut config = add_ewmh_hooks(Config {
         focused_border: user.theme.accent.into(),
         normal_border: user.theme.grey.into(),
         default_layouts: layouts::build_layouts(user.bar.reserve_top),
         manage_hook: manage_hook(user),
-        startup_hook: Some(hooks::startup_hook(&user.apps.startup_script)),
+        startup_hook: run_startup.then(|| hooks::startup_hook(&user.apps.startup_script)),
         ..Config::default()
     });
 

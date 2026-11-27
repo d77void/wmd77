@@ -25,7 +25,18 @@ use tracing_subscriber::{self, prelude::*};
 
 use keybindings::RESTART_REQUESTED;
 
+/// Set on the process the restart below re-execs: the session's startup
+/// script already ran, so the new process skips it.
+const RESTARTED_ENV: &str = "WMD77_RESTARTED";
+
 fn main() -> Result<()> {
+    let restarted = std::env::var_os(RESTARTED_ENV).is_some();
+    if restarted {
+        // Programs started from here on must not inherit it.
+        // SAFETY: first thing in main, before any other thread exists.
+        unsafe { std::env::remove_var(RESTARTED_ENV) };
+    }
+
     // Initialize logging
     tracing_subscriber::fmt()
         .with_env_filter("trace")
@@ -41,7 +52,7 @@ fn main() -> Result<()> {
     let (nsp_terminal, toggle_terminal) = scratchpads::create_terminal_scratchpad();
 
     // Build configuration
-    let config = config::build_config(&user);
+    let config = config::build_config(&user, !restarted);
 
     // Setup X11 connection
     let conn = RustConn::new().context("Failed to establish X11 connection")?;
@@ -121,7 +132,9 @@ fn main() -> Result<()> {
             .and_then(|path| path.strip_suffix(" (deleted)"))
             .map(std::path::PathBuf::from)
             .unwrap_or(exe);
-        let err = std::process::Command::new(exe).exec();
+        let err = std::process::Command::new(exe)
+            .env(RESTARTED_ENV, "1")
+            .exec();
         // `exec` only returns if it failed to replace the process image.
         panic!("failed to re-exec wmd77 for restart: {err}");
     }
